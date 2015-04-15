@@ -7,15 +7,26 @@ app.get("/", function(req, res){
 })
 
 io.on("connection", function(socket){
-	console.log("a user connected.");
+	var username;
+
+	socket.on("user connected", function(name){
+		username = name;
+		console.log(name + " connected.");
+		io.emit("user connected", username);
+	});
 
 	socket.on("chat message", function(msg){
 		console.log("message: " + msg);
 		io.emit("chat message", msg);
 	});
 
+	socket.on("user typing", function(){
+		io.emit("user typing", username);
+	});
+
 	socket.on("disconnect", function(socket){
-		console.log("a user disconnected.");
+		console.log(username + " disconnected.");
+		io.emit("user disconnected", username);
 	});
 });
 
